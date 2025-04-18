@@ -46,7 +46,7 @@
                     <x-list-item :item="$user" value="name" sub-value="email" no-separator no-hover
                         class="-mx-2 !-my-2 rounded">
                         <x-slot:actions>
-                            <x-button icon="o-power" class="btn-circle btn-ghost btn-xs" tooltip-left="logoff"
+                            <x-button icon="o-power" class="btn-circle btn-ghost btn-xs" tooltip-left="Log Out"
                                 no-wire-navigate link="/logout" />
                         </x-slot:actions>
                     </x-list-item>
@@ -55,14 +55,14 @@
                 @endif
 
                 <x-menu-item title="Home" icon="o-sparkles" link="/" />
-                <x-menu-item title="Users" icon="o-users" link="/users" />
+                <x-menu-item title="User Admin" icon="o-users" link="/users" />
 
-                <x-menu-item title="{{ _('New Data') }}" icon="o-plus-circle" link="/" />
+                {{-- <x-menu-item title="New Data" icon="o-plus-circle" link="/" />
 
                 <x-menu-sub title="Settings" icon="o-cog-6-tooth">
                     <x-menu-item title="Wifi" icon="o-wifi" link="####" />
                     <x-menu-item title="Archives" icon="o-archive-box" link="####" />
-                </x-menu-sub>
+                </x-menu-sub> --}}
             </x-menu>
         </x-slot:sidebar>
 

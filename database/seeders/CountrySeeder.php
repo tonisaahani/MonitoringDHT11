@@ -30,6 +30,9 @@ class CountrySeeder extends Seeder
             [
                 'name' => 'France'
             ],
+            [
+                'name' => 'Indonesia'
+            ],
         ]);
     }
 }
