@@ -26,12 +26,13 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
+            "avatar" => 'https://picsum.photos/id/'. random_int(1, 100) .'/200/300',
             'country_id' => Country::inRandomOrder()->first(),
             'name' => fake()->name(),
             'bio' => fake()->paragraph(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => static::$password ??= Hash::make('password123'),
             'remember_token' => Str::random(10),
         ];
     }
