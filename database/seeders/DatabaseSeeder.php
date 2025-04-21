@@ -16,15 +16,15 @@ class DatabaseSeeder extends Seeder
     {
         User::create([
             "avatar" => 'https://picsum.photos/id/1/200/300',
-            'name' => 'Toni Cina',
-            'isAdmin' => true,
-            'bio' => 'Saya Cina dan saya bangga.',
+            'name' => 'Toni Sahani',
+            'role' => 'admin',
+            'bio' => 'Ini adalah akun Admin.',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('password123'),
         ]);
 
         $this->call(CountrySeeder::class);
         $this->call(LanguageSeeder::class);
-        User::factory(5)->create();
+        User::factory(1)->create();
     }
 }

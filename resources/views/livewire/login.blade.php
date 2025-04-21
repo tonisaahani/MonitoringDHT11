@@ -45,8 +45,11 @@ new #[Layout('components.layouts.empty')] #[Title('Login')] class
         <x-input placeholder="E-mail" wire:model="email" icon="o-envelope" />
         <x-input placeholder="Password" wire:model="password" type="password" icon="o-key" />
 
-        <x-slot:actions>
+        <x-slot:actions class="flex flex-col">
             <x-button label="Create an account" class="btn-ghost" link="/register" />
+            <a href="{{ route('socialite.redirect', 'google') }}">Ini tombol!</a>
+            <x-button label="Login Dengan Google" class="btn-outline hover:bg-white hover:text-gray-700"
+                link="{{ route('socialite.redirect', 'google') }}" />
             <x-button label="Login" type="submit" icon="o-paper-airplane" class="btn-primary" spinner="login" />
         </x-slot:actions>
     </x-form>

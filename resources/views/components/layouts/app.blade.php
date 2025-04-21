@@ -55,7 +55,11 @@
                 @endif
 
                 <x-menu-item title="Home" icon="o-sparkles" link="/" />
-                <x-menu-item title="User Admin" icon="o-users" link="/users" />
+                <x-menu-separator />
+
+                @if (Auth::user()->role == 'admin')
+                    <x-menu-item title="User Admin" icon="o-users" link="/users" />
+                @endif
 
                 {{-- <x-menu-item title="New Data" icon="o-plus-circle" link="/" />
 
@@ -63,7 +67,11 @@
                     <x-menu-item title="Wifi" icon="o-wifi" link="####" />
                     <x-menu-item title="Archives" icon="o-archive-box" link="####" />
                 </x-menu-sub> --}}
+                <x-menu-separator />
+                <x-menu-item title="Node Admin" icon="o-sparkles" link="/admin/node" />
+
             </x-menu>
+
         </x-slot:sidebar>
 
         {{-- The `$slot` goes here --}}

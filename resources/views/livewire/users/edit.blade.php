@@ -71,7 +71,7 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="Update {{ $user->name }}" separator />
+    <x-header title="Update Profile" separator />
 
     {{-- FORM --}}
     <x-form wire:submit="save">

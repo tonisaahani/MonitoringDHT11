@@ -1,13 +1,23 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\SocialiteController;
 
 Volt::route('/register', 'register');
 
 // Users will be redirected to this route if not logged in
 Volt::route('/login', 'login')->name('login');
+
+
+Route::get('/', App\Livewire\Idx::class)->name('idx');
+
+Route::get('/admin/node', App\Livewire\Admin\Node\Idx::class)->name('admin.node');
+
+
 
 // Define the logout
 Route::get('/logout', function () {
@@ -18,11 +28,38 @@ Route::get('/logout', function () {
     return redirect('/');
 });
 
-// Protected routes here
+// Route::controller(SocialiteController::class)->group(function () {
+//     Route::prefix('/auth/')->as('socialite.')->group(function () {
+//         Route::get('{provider}/redirect', 'redirect')->name('redirect');
+//         Route::get('{provider}/callback', 'callback')->name('callback');
+//     });
+// });
+
+Route::controller(SocialiteController::class)->group(function () {
+    Route::group([
+        'prefix' => '/auth/',
+        'as' => 'socialite.',
+    ], function () {
+        Route::get('{provider}/redirect', 'redirect')->name('redirect');
+        Route::get('{provider}/callback', 'callback')->name('callback');
+    });
+});
+
+
 Route::middleware('auth')->group(function () {
+    Route::get('/huun', [HomeController::class, 'index'])->name('home');
     Volt::route('/', 'index');
+});
+
+
+
+// Protected routes here
+Route::middleware(['auth', 'admin'])->group(function () {
     Volt::route('/users', 'users.index');
     Volt::route('/users/create', 'users.create');
     Volt::route('/users/{user}/edit', 'users.edit');
     // ... more
 });
+
+Route::get('/create-password', [AuthController::class, 'createPasswordForm'])->name('password.create');
+Route::post('/create-password', [AuthController::class, 'storePassword'])->name('password.store');
