@@ -7,10 +7,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ isset($title) ? $title . ' - ' . config('app.name') : config('app.name') }}</title>
 
-    {{-- Cropper.js
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" /> --}}
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -61,15 +57,14 @@
                     <x-menu-item title="User Admin" icon="o-users" link="/users" />
                 @endif
 
-                {{-- <x-menu-item title="New Data" icon="o-plus-circle" link="/" />
+                {{-- <x-menu-separator />
+                <x-menu-item title="Node Admin" icon="o-sparkles" link="/admin/node" /> --}}
 
-                <x-menu-sub title="Settings" icon="o-cog-6-tooth">
-                    <x-menu-item title="Wifi" icon="o-wifi" link="####" />
-                    <x-menu-item title="Archives" icon="o-archive-box" link="####" />
-                </x-menu-sub> --}}
                 <x-menu-separator />
-                <x-menu-item title="Node Admin" icon="o-sparkles" link="/admin/node" />
+                <x-menu-item title="Monitoring" icon="o-sparkles" link="/admin/monitoring" />
 
+                <x-menu-separator />
+                <x-menu-item title="Gauge" icon="o-sparkles" link="/admin/gauge" />
             </x-menu>
 
         </x-slot:sidebar>
@@ -86,8 +81,8 @@
     {{-- Spotlight --}}
     <x-spotlight />
 
-    {{-- @livewireScripts --}}
-    {{-- <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
+    {{-- Livewire Scripts & Stack Scripts --}}
+    @livewireScripts
+    @stack('scripts')
 </body>
-
 </html>

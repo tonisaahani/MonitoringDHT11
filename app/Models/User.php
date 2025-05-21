@@ -14,36 +14,42 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
-     * The attributes that aren't mass assignable.
-     *
-     * @var array<string>|bool
+     * Nama tabel custom (default-nya 'users', tapi kamu ubah ke 'userrr')
+     */
+    protected $table = 'users';
+
+
+    /**
+     * Kolom yang tidak boleh diisi massal.
      */
     protected $guarded = ['id'];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
+     * Kolom yang disembunyikan saat dikonversi ke array/JSON.
      */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
+    /**
+     * Relasi ke tabel countries
+     */
     public function country(): BelongsTo
     {
         return $this->belongsTo(Country::class);
     }
 
+    /**
+     * Relasi many-to-many ke tabel languages
+     */
     public function languages(): BelongsToMany
     {
         return $this->belongsToMany(Language::class);
     }
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Konversi otomatis tipe data.
      */
     protected function casts(): array
     {

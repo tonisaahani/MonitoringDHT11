@@ -7,11 +7,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "bluerhinos/phpmqtt": "^1.0",
         "laravel/framework": "^12.0",
         "laravel/socialite": "^5.19",
         "laravel/tinker": "^2.10.1",
         "livewire/livewire": "^3.6",
         "livewire/volt": "^1.7",
+        "php-mqtt/laravel-client": "^1.6",
         "robsontenorio/mary": "^2.2"
     },
     "require-dev": {

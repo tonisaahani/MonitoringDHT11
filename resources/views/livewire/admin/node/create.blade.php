@@ -1,21 +1,3 @@
-namespace App\Http\Livewire\Admin\Node;
-
-use Livewire\Component;
-
-class Create extends Component
-{
-public $addNodeState = false; // Menambahkan properti $addNodeState
-
-public function render()
-{
-return view('livewire.admin.node.create');
-}
-
-public function addNode()
-{
-$this->addNodeState = true; // Ubah state ketika add node dipanggil
-}
-}
 <div>
     @if ($addNodeState == false)
         <div class="text-left">
@@ -33,7 +15,35 @@ $this->addNodeState = true; // Ubah state ketika add node dipanggil
             </h1>
             <br />
             <div class="flex flex-wrap -mx-3">
-                <!-- Form untuk menambah node di sini -->
+                <div class="w-full max-w-full px-3 mb-6 sm:w-4/4 sm:flex-none xl:mb-0 xl:w-4/4 text-right">
+                    <x-button wire:click="addNode" icon="o-x-mark" class="btn-outline btn-circle btn-error btn-xs" />
+                </div>
+            </div>
+            <br />
+            <div class="flex flex-wrap -mx-3">
+                <div class="w-full max-w-full px-3 mb-6 sm:w-1/4 sm:flex-none xl:mb-0 xl:w-1/4 text-left">
+                    <x-input wire:model="code" label="Code" icon="o-at-symbol"
+                        placeholder="Please Add" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-6 sm:w-2/4 sm:flex-none xl:mb-0 xl:w-2/4 text-left">
+                    <x-input wire:model="name" label="Node Name" icon="o-at-symbol"
+                        placeholder="Please Add" />
+                </div>
+            </div>
+            <br />
+            <div class="flex flex-wrap -mx-3">
+                <div class="w-full max-w-full px-3 mb-6 sm:w-1/4 sm:flex-none xl:mb-0 xl:w-1/4 text-left">
+
+                    <x-button
+                    wire:click="saveNode"
+                    wire:loading.attr="disabled"
+                    wire:target="saveNode"
+                    spinner
+                    label="Save"
+                    icon="o-bookmark"
+                    class="btn-sm btn-success"
+                />
+            </div>
             </div>
         </div>
     @endif

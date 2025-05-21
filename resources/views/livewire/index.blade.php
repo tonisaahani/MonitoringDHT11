@@ -9,7 +9,7 @@ new class extends Component {
 
 <div class="">
     <div>
-        <x-card title="Index page" subtitle="Aplikasi Teknologi Jaringan dan Perangkat Lunak Telekomunikasi 2024/2025-2"
+        <x-card title="Home" subtitle="Aplikasi Teknologi Jaringan dan Perangkat Lunak Telekomunikasi 2024/2025-2"
             shadow separator>
 
         </x-card>
