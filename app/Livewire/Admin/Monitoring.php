@@ -26,13 +26,13 @@ class Monitoring extends Component
     {
         SensorLog::truncate();
         $this->showConfirmDelete = false;
-        // Optionally add notification/toast here
     }
 
     public function render()
     {
-        // Ambil 50 data terbaru (saja)
-        $allLogs = SensorLog::orderBy('created_at', 'desc')->limit(50)->get();
+        // Ambil 50 data terbaru dan skip data invalid
+        $allLogs = SensorLog::where('value', 'not like', 'Invalid format:%')
+            ->orderBy('created_at', 'desc')->limit(50)->get();
 
         // Manual pagination
         $perPage = 5;
@@ -52,5 +52,4 @@ class Monitoring extends Component
             'showConfirmDelete' => $this->showConfirmDelete,
         ]);
     }
-
 }

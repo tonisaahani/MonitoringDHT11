@@ -51,20 +51,23 @@
                 @endif
 
                 <x-menu-item title="Home" icon="o-sparkles" link="/" />
-                <x-menu-separator />
 
-                @if (Auth::user()->role == 'admin')
-                    <x-menu-item title="User Admin" icon="o-users" link="/users" />
-                @endif
-
-                {{-- <x-menu-separator />
-                <x-menu-item title="Node Admin" icon="o-sparkles" link="/admin/node" /> --}}
 
                 <x-menu-separator />
                 <x-menu-item title="Monitoring" icon="o-sparkles" link="/admin/monitoring" />
 
-                <x-menu-separator />
+
                 <x-menu-item title="Gauge" icon="o-sparkles" link="/admin/gauge" />
+
+                <x-menu-separator />
+                <x-menu-item title="Node Admin" icon="o-sparkles" link="/admin/node" />
+
+                <x-menu-separator />
+                @if (Auth::user()->role == 'admin')
+                    <x-menu-item title="User Admin" icon="o-users" link="/users" />
+                @endif
+
+
             </x-menu>
 
         </x-slot:sidebar>

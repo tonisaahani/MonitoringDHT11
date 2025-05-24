@@ -73,12 +73,10 @@ Route::post('/create-password', [AuthController::class, 'storePassword'])->name(
 
 // routes/web.php
 use App\Livewire\Admin\Monitoring;
-// use App\Livewire\Admin\Gauge;
+use App\Livewire\MonitoringGauge;
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/monitoring', Monitoring::class)->name('admin.monitoring');
-
-    // Route::get('/admin/gauge', Gauge::class)->name('admin.gauge');
-
-
+    Route::get('/admin/gauge', MonitoringGauge::class)->name('admin.gauge');
 });
+

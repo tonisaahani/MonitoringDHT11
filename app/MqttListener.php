@@ -11,32 +11,30 @@ class MqttListener
     {
         try {
             MQTT::connection()->subscribe('esp32/monitoring/suhu', function (string $topic, string $message): void {
-                // Coba decode JSON
                 $data = json_decode($message, true);
 
-                if (is_array($data) && isset($data['suhu']) && isset($data['humidity'])) {
-                    // Simpan data sebagai JSON string agar bisa didecode di Livewire
+                if (
+                    is_array($data) &&
+                    isset($data['suhu']) &&
+                    isset($data['humidity']) &&
+                    isset($data['gas']) &&
+                    isset($data['flame']) &&
+                    isset($data['buzzer'])
+                ) {
+                    $value = "Suhu : {$data['suhu']}°C Humidity : {$data['humidity']}%";
                     SensorLog::create([
-                        'topic' => $topic,
-                        'value' => json_encode([
-                            'suhu' => floatval($data['suhu']),
-                            'humidity' => floatval($data['humidity']),
-                        ]),
+                        'topic' => '',
+                        'value' => $value,
+                        'gas' => $data['gas'],
+                        'flame' => $data['flame'] === 'Api Terdeteksi' ? 1 : 0,
+                        'buzzer' => $data['buzzer'] === 'Nyala' ? 1 : 0,
                     ]);
 
-                    echo "✅ Data tersimpan: $topic | Suhu: {$data['suhu']} | Humidity: {$data['humidity']}\n";
+
+                    echo "✅ Tersimpan: $value | Gas: {$data['gas']} ppm | Flame: {$data['flame']} | Buzzer: {$data['buzzer']}\n";
                 } else {
-                    // Jika format salah (bukan JSON valid), simpan mentah
-                    SensorLog::create([
-                        'topic' => $topic,
-                        'value' => json_encode([
-                            'suhu' => 0,
-                            'humidity' => 0,
-                            'raw' => $message
-                        ]),
-                    ]);
-
-                    echo "⚠️ Format tidak valid, disimpan mentah: $topic => $message\n";
+                    // Tidak perlu insert row ke database untuk data invalid!
+                    echo "⚠️ Format tidak valid: $message\n";
                 }
             }, 0);
 
