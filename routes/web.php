@@ -80,3 +80,46 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/gauge', MonitoringGauge::class)->name('admin.gauge');
 });
 
+
+
+
+
+
+use App\Models\SensorLog;
+use Carbon\Carbon;
+
+Route::get('/chart-data', function () {
+    $data = SensorLog::where('created_at', '>=', Carbon::now()->subMinutes(5))
+        ->orderBy('created_at')
+        ->get()
+        ->map(function ($log) {
+            if (preg_match('/Suhu\s*:\s*([\d.]+)°C/', $log->value, $m)) {
+                return [
+                    'x' => Carbon::parse($log->created_at)->setTimezone('Asia/Jakarta')->toIso8601String(),
+                    'y' => floatval($m[1])
+                ];
+            }
+            return null;
+        })->filter()->values();
+
+    return response()->json([
+        'data' => $data,
+        'total' => SensorLog::count(),
+        'latest_suhu' => optional(SensorLog::latest()->first(), function ($log) {
+            preg_match('/Suhu\s*:\s*([\d.]+)°C/', $log->value, $m);
+            return $m[1] ?? '-';
+        }),
+        'flame' => SensorLog::orderBy('created_at', 'desc')->first()?->flame == 1,
+        'flame' => (int) SensorLog::orderBy('created_at', 'desc')->first()?->flame === 1,
+
+
+
+        'logs' => SensorLog::latest()->take(5)->get()->map(function ($log) {
+            return [
+                'time' => Carbon::parse($log->created_at)->timezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
+                'value' => $log->value
+            ];
+        })
+    ]);
+});
+

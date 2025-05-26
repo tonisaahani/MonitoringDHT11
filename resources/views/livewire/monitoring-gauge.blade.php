@@ -15,20 +15,41 @@
                 data: {
                     datasets: [{
                         data: [value, Math.max(0, max - value)],
-                        backgroundColor: [color, '#f1f5f9'],
+                        backgroundColor: [color, '#334155'],
                         borderWidth: 0,
                         cutout: '80%',
                     }]
                 },
                 options: {
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutBounce'
+                    },
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
                         legend: { display: false },
-                        tooltip: { enabled: false }
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return `Nilai: ${context.raw}`;
+                                }
+                            }
+                        }
                     }
                 }
             });
+        },
+        gasLevel() {
+            if (this.gas < 300) return 'Aman';
+            if (this.gas < 1000) return 'Sedang';
+            return 'Bahaya';
+        },
+        gasColor() {
+            if (this.gas < 300) return 'text-green-400';
+            if (this.gas < 1000) return 'text-yellow-400';
+            return 'text-red-500';
         },
         renderCharts() {
             if (this.tempChart) this.tempChart.destroy();
@@ -36,65 +57,66 @@
             if (this.gasChart) this.gasChart.destroy();
 
             this.tempChart = this.createGauge(this.$refs.tempChart, Number(this.temperature), 100, '#3b82f6');
-            this.humChart = this.createGauge(this.$refs.humChart, Number(this.humidity), 100, '#06b6d4');
-            this.gasChart = this.createGauge(this.$refs.gasChart, Number(this.gas), this.maxGas, '#f59e42');
+            this.humChart = this.createGauge(this.$refs.humChart, Number(this.humidity), 100, '#fbbf24');
+            this.gasChart = this.createGauge(this.$refs.gasChart, Number(this.gas), this.maxGas, '#f97316');
         }
     }"
     x-init="renderCharts()"
     x-effect="renderCharts()"
     wire:poll.5s="fetchLatest"
-    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 p-4"
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6 p-6"
 >
 
     <!-- JUDUL -->
-    <div class="col-span-full text-center mb-6">
-        <h2 class="text-2xl font-bold text-white">Monitoring Suhu, Asap, dan Deteksi Api Ruangan</h2>
-        <p class="text-gray-300 text-sm">Pantauan real-time suhu, konsentrasi asap, dan status api untuk keamanan ruangan Anda</p>
+    <div class="col-span-full text-center mb-8">
+        <h2 class="text-3xl font-bold text-white">Monitoring Suhu, Asap, dan Deteksi Api Ruangan</h2>
+        <p class="text-slate-400 text-base mt-2">Pantauan real-time suhu, konsentrasi asap, dan status api untuk keamanan ruangan Anda</p>
     </div>
 
     <!-- TEMPERATURE -->
-    <div class="bg-white rounded-2xl p-4 shadow h-44 w-full max-w-[230px] mx-auto flex items-center justify-center relative">
+    <div class="bg-[#1e293b] rounded-2xl p-4 shadow h-44 w-full max-w-[230px] mx-auto flex items-center justify-center relative">
         <canvas x-ref="tempChart" width="160" height="160"></canvas>
         <span class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span class="text-base font-bold text-blue-600" x-text="temperature + '°C'"></span>
-            <span class="text-sm font-semibold text-blue-400">Temperature</span>
+            <span class="text-base font-bold text-blue-500" x-text="temperature + '°C'"></span>
+            <span class="text-sm font-semibold text-slate-300">Temperature</span>
         </span>
     </div>
 
     <!-- HUMIDITY -->
-    <div class="bg-white rounded-2xl p-4 shadow h-44 w-full max-w-[230px] mx-auto flex items-center justify-center relative">
+    <div class="bg-[#1e293b] rounded-2xl p-4 shadow h-44 w-full max-w-[230px] mx-auto flex items-center justify-center relative">
         <canvas x-ref="humChart" width="160" height="160"></canvas>
         <span class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span class="text-base font-bold text-cyan-600" x-text="humidity + '%'"></span>
-            <span class="text-sm font-semibold text-cyan-400">Humidity</span>
+            <span class="text-base font-bold text-yellow-400" x-text="humidity + '%'"></span>
+            <span class="text-sm font-semibold text-slate-300">Humidity</span>
         </span>
     </div>
 
     <!-- GAS -->
-    <div class="bg-white rounded-2xl p-4 shadow h-44 w-full max-w-[230px] mx-auto flex items-center justify-center relative">
+    <div class="bg-[#1e293b] rounded-2xl p-4 shadow h-44 w-full max-w-[230px] mx-auto flex items-center justify-center relative">
         <canvas x-ref="gasChart" width="160" height="160"></canvas>
         <span class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span class="text-base font-bold text-orange-600" x-text="gas + ' ppm'"></span>
-            <span class="text-sm font-semibold text-orange-400">Gas</span>
+            <span class="text-base font-bold" :class="gasColor()" x-text="gas + ' ppm'"></span>
+            <span class="text-sm font-semibold text-slate-300">Gas (<span x-text="gasLevel()"></span>)</span>
         </span>
     </div>
 
-<!-- FLAME -->
-<div class="bg-white rounded-2xl p-4 shadow h-44 w-full max-w-[230px] mx-auto flex items-center justify-center relative">
-    <span class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-        <span class="text-base font-bold" :class="flame ? 'text-red-600' : 'text-gray-700'" x-text="flame ? 'Api Terdeteksi' : 'Tidak Terdeteksi Api'"></span>
-        <span class="text-sm font-semibold text-red-500">Flame</span>
-    </span>
+    <!-- FLAME -->
+<div class="bg-[#1e293b] rounded-2xl p-4 shadow h-44 w-full max-w-[230px] mx-auto flex items-center justify-center relative group cursor-pointer transition-all hover:scale-[1.02] duration-200 ease-in-out">
+    <div class="absolute inset-0 rounded-2xl bg-transparent group-hover:bg-white/5 transition-all duration-200"></div>
+    <div class="z-10 flex flex-col items-center justify-center text-center">
+        <span class="text-base font-bold" :class="flame ? 'text-red-500' : 'text-slate-300'" x-text="flame ? 'Api Terdeteksi' : 'Tidak Terdeteksi Api'"></span>
+        <span class="text-sm font-semibold text-slate-300">Flame</span>
+    </div>
 </div>
 
 <!-- BUZZER -->
-<div class="bg-white rounded-2xl p-4 shadow h-44 w-full max-w-[230px] mx-auto flex items-center justify-center relative">
-    <span class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-        <span class="text-base font-bold" :class="buzzer ? 'text-indigo-600' : 'text-gray-700'" x-text="buzzer ? 'Nyala' : 'Mati'"></span>
-        <span class="text-sm font-semibold text-indigo-500">Buzzer</span>
-    </span>
+<div class="bg-[#1e293b] rounded-2xl p-4 shadow h-44 w-full max-w-[230px] mx-auto flex items-center justify-center relative group cursor-pointer transition-all hover:scale-[1.02] duration-200 ease-in-out">
+    <div class="absolute inset-0 rounded-2xl bg-transparent group-hover:bg-white/5 transition-all duration-200"></div>
+    <div class="z-10 flex flex-col items-center justify-center text-center">
+        <span class="text-base font-bold" :class="buzzer ? 'text-indigo-500' : 'text-slate-300'" x-text="buzzer ? 'Nyala' : 'Mati'"></span>
+        <span class="text-sm font-semibold text-slate-300">Buzzer</span>
+    </div>
 </div>
-
 
 
 
