@@ -1,60 +1,71 @@
-@php
-    use Carbon\Carbon;
-@endphp
-
-<div class="space-y-6">
-    <div class="flex flex-col items-center justify-center text-center px-4 py-6 bg-[#1e293b] rounded-xl shadow text-white">
-        <h1 class="text-2xl font-bold flex items-center gap-2 justify-center">
-            <svg class="w-6 h-6 text-violet-500" fill="none" stroke="currentColor" stroke-width="2"
-                viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4" />
-            </svg>
-            Dashboard
-        </h1>
-        <p class="text-sm text-slate-400 mt-1">Pantauan Sistem Monitoring Lingkungan Ruangan</p>
-    </div>
-
-    {{-- Stat Cards --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-[#1e293b] rounded-xl p-4 shadow text-white">
-            <p class="text-sm text-slate-400">Total Data Log</p>
-            <p class="text-2xl font-bold mt-1" id="total-log">{{ \App\Models\SensorLog::count() }}</p>
+<div class="space-y-6 font-sans">
+    {{-- Header --}}
+    <div class="bg-[#1e293b] px-6 py-5 rounded-xl shadow text-white flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-4">
+            <div class="bg-violet-600 p-3 rounded-full">
+                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4" />
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-3xl font-extrabold tracking-tight font-sans">Dashboard Monitoring</h1>
+                <p class="text-sm text-slate-400 mt-1 font-sans">📡 Pemantauan suhu, gas, api & kelembapan secara real-time.</p>
+            </div>
         </div>
-        <div class="bg-[#1e293b] rounded-xl p-4 shadow text-white overflow-hidden select-none focus:outline-none">
-            <p class="text-sm text-slate-400">Suhu Terakhir</p>
-            <p class="text-2xl font-bold mt-1 text-orange-400" id="suhu-terakhir">
-                @php
-                    preg_match('/Suhu\s*:\s*([\d.]+)°C/', optional(\App\Models\SensorLog::latest()->first())->value ?? '', $suhu);
-                @endphp
-                {{ $suhu[1] ?? '-' }}°C
-            </p>
-        </div>
-        <div class="bg-[#1e293b] rounded-xl p-4 shadow text-white overflow-hidden select-none focus:outline-none">
-            <p class="text-sm text-slate-400">Status Api</p>
-            <p id="status-api" class="text-2xl font-bold mt-1">
-                Memuat...
-            </p>
-
+        <div class="text-sm flex items-center gap-2">
+            <span id="sistem-status" class="bg-green-600 text-white font-medium px-3 py-1 rounded-full">🟢 Sistem Aktif</span>
+            <span id="status-mqtt" class="bg-blue-500 text-white font-medium px-3 py-1 rounded-full">📶 MQTT Connected</span>
+            <span id="durasi-aktif" class="text-slate-300">⏱️ Aktif selama: --:--:--</span>
+            <span class="text-slate-400 hidden md:inline">|</span>
+            <span class="text-xs text-slate-300 hidden md:inline">Terakhir update <span id="update-time">--:--:--</span></span>
         </div>
     </div>
 
-    {{-- Mini Chart --}}
+
+    <div class="bg-[#1e293b] p-4 rounded-xl shadow text-white">
+        <h2 class="text-lg font-semibold mb-2 flex items-center gap-2">
+
+            Ringkasan Sistem
+        </h2>
+        <p id="ringkasan-sistem" class="text-sm text-slate-300 mb-4">Memuat ringkasan sistem...</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4">
+            <div class="bg-[#334155] rounded-xl p-4 shadow text-white">
+                <p class="text-sm text-slate-400 text-center">Suhu Terkini</p>
+                <p class="text-2xl font-bold mt-1 text-orange-400 text-center" id="suhu-terakhir">Memuat...</p>
+            </div>
+            <div class="bg-[#334155] rounded-xl p-4 shadow text-white">
+                <p class="text-sm text-slate-400 text-center">Kelembapan Terkini</p>
+                <p class="text-2xl font-bold mt-1 text-yellow-400 text-center" id="humidity-terakhir">Memuat...</p>
+            </div>
+            <div class="bg-[#334155] rounded-xl p-4 shadow text-white">
+                <p class="text-sm text-slate-400 text-center">Gas Terkini (ppm)</p>
+                <p class="text-2xl font-bold mt-1 text-green-400 text-center" id="gas-terakhir">Memuat...</p>
+
+            </div>
+            <div class="bg-[#334155] rounded-xl p-4 shadow text-white">
+                <p class="text-sm text-slate-400 text-center">Status Api</p>
+                <p class="text-2xl font-bold mt-1 text-center" id="status-api">Memuat...</p>
+            </div>
+            <div class="bg-[#334155] rounded-xl p-4 shadow text-white">
+                <p class="text-sm text-slate-400 text-center">Status Sistem</p>
+                <p class="text-2xl font-bold mt-1 text-center" id="status-sistem">Memuat...</p>
+
+            </div>
+            <div class="bg-[#334155] rounded-xl p-4 shadow text-white">
+                <h3 class="text-sm text-slate-400 mb-1 text-center">Notifikasi Sistem</h3>
+                <ul id="notifikasi-log" class="text-sm space-y-1">
+                    <li>Memuat notifikasi ...</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {{-- Grafik Komparatif --}}
     <div class="bg-[#1e293b] rounded-xl p-4 shadow text-white mt-4">
-        <h3 class="text-lg font-semibold mb-2">Grafik Ringan Suhu</h3>
-        <canvas id="miniChart" height="100"></canvas>
-    </div>
-
-    {{-- Log Terakhir --}}
-    <div class="bg-[#1e293b] rounded-xl p-4 shadow text-white mt-4">
-        <h3 class="text-lg font-semibold mb-2">5 Log Terakhir</h3>
-        <ul class="text-sm space-y-1" id="log-terakhir">
-            @foreach(\App\Models\SensorLog::latest()->take(5)->get() as $log)
-                <li>
-                    📌 {{ \Carbon\Carbon::parse($log->created_at)->timezone('Asia/Jakarta')->format('Y-m-d H:i:s') }} — {{ $log->value }}
-                </li>
-            @endforeach
-        </ul>
+        <h3 class="text-lg font-semibold mb-2">Grafik Suhu (5 Menit Terakhir)</h3>
+        <div class="overflow-x-auto">
+            <canvas id="multiChart" height="450" class="w-full"></canvas>
+        </div>
     </div>
 </div>
 
@@ -62,26 +73,62 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/luxon@3"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
-
 <script>
-    const ctx = document.getElementById('miniChart').getContext('2d');
+                let startTime = null;
+                let timerInterval = null;
 
-    const miniChart = new Chart(ctx, {
+function formatDuration(duration) {
+    const hours = String(Math.floor(duration / 3600)).padStart(2, '0');
+    const minutes = String(Math.floor((duration % 3600) / 60)).padStart(2, '0');
+    const seconds = String(duration % 60).padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+}
+
+function startTimerPersistent() {
+    if (!localStorage.getItem('mqtt_start_time')) {
+        localStorage.setItem('mqtt_start_time', Math.floor(Date.now() / 1000));
+    }
+
+    if (!timerInterval) {
+        timerInterval = setInterval(() => {
+            const startTime = parseInt(localStorage.getItem('mqtt_start_time'));
+            const now = Math.floor(Date.now() / 1000);
+            const duration = now - startTime;
+            document.getElementById('durasi-aktif').innerText = '⏱️ Aktif selama: ' + formatDuration(duration);
+        }, 1000);
+    }
+}
+
+function resetTimerPersistent() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    localStorage.removeItem('mqtt_start_time');
+    document.getElementById('durasi-aktif').innerText = '⏱️ Aktif selama: --:--:--';
+}
+
+
+    const ctx = document.getElementById('multiChart').getContext('2d');
+    const multiChart = new Chart(ctx, {
         type: 'line',
         data: {
-            datasets: [{
-                label: 'Suhu (°C)',
-                data: [],
-                borderColor: 'orange',
-                backgroundColor: 'rgba(255,165,0,0.1)',
-                tension: 0.3,
-                fill: true,
-                pointRadius: 4,
-                pointHoverRadius: 6,
-            }]
+            datasets: [
+                {
+                    label: 'Suhu (°C)',
+                    data: [],
+                    borderColor: 'orange',
+                    yAxisID: 'y1',
+                    tension: 0.3,
+                    fill: false,
+                    pointRadius: 0,
+                    pointHoverRadius: 4,
+                    pointStyle: 'circle'
+                }
+            ]
         },
         options: {
             responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            stacked: false,
             scales: {
                 x: {
                     type: 'time',
@@ -89,45 +136,25 @@
                         unit: 'minute',
                         tooltipFormat: 'HH:mm:ss',
                         displayFormats: {
-                            second: 'HH:mm:ss',
                             minute: 'HH:mm'
                         }
                     },
-                    min: luxon.DateTime.now().minus({ minutes: 5 }).toISO(),
-                    max: luxon.DateTime.now().toISO(),
+                    ticks: {
+                        source: 'auto',
+                        autoSkip: true,
+                        maxTicksLimit: 6,
+                        maxRotation: 0,
+                        minRotation: 0
+                    },
                     title: {
                         display: true,
-                        text: 'Waktu (5 Menit Terakhir)'
-                    },
-                    ticks: {
-                        autoSkip: true,
-                        maxTicksLimit: 10
+                        text: 'Waktu'
                     }
                 },
-                y: {
-                    beginAtZero: false,
-                    min: 25,
-                    max: 33,
-                    ticks: {
-                        stepSize: 1,
-                        callback: function(value) {
-                            return value + '°C';
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Suhu (°C)'
-                    }
-                }
-            },
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return context.parsed.y + '°C';
-                        }
-                    }
+                y1: {
+                    type: 'linear',
+                    position: 'left',
+                    title: { display: true, text: 'Suhu (°C)' }
                 }
             }
         }
@@ -137,27 +164,85 @@
         fetch('/chart-data')
             .then(res => res.json())
             .then(data => {
-                miniChart.data.datasets[0].data = data.data;
-                miniChart.options.scales.x.min = luxon.DateTime.now().minus({ minutes: 5 }).toISO();
-                miniChart.options.scales.x.max = luxon.DateTime.now().toISO();
-                miniChart.update();
+                const suhu = data.data || [];
+                multiChart.data.datasets[0].data = suhu;
+                multiChart.update();
 
-                document.getElementById('total-log').innerText = data.total;
+                document.getElementById('update-time').innerText = data.last_update || '--:--:--';
                 document.getElementById('suhu-terakhir').innerText = data.latest_suhu + '°C';
+                document.getElementById('humidity-terakhir').innerText = data.latest_humidity + '%';
+
+                const gasEl = document.getElementById('gas-terakhir');
+                gasEl.innerText = data.latest_gas + ' ppm';
+                gasEl.className = 'text-2xl font-bold mt-1 font-sans text-center ' +
+                    (data.latest_gas > 1000 ? 'text-red-500' : data.latest_gas > 500 ? 'text-yellow-400' : 'text-green-400');
 
                 const statusApi = document.getElementById('status-api');
                 statusApi.innerText = data.flame ? 'Api Terdeteksi' : 'Tidak Terdeteksi';
-                statusApi.className = data.flame
-                    ? 'text-2xl font-bold mt-1 text-red-500'
-                    : 'text-2xl font-bold mt-1 text-green-400';
+                statusApi.className = 'text-2xl font-bold mt-1 font-sans ' + (data.flame ? 'text-red-500' : 'text-green-400');
 
-                const ul = document.getElementById('log-terakhir');
-                ul.innerHTML = '';
-                data.logs.forEach(log => {
-                    const li = document.createElement('li');
-                    li.innerText = `📌 ${log.time} — ${log.value}`;
-                    ul.appendChild(li);
-                });
+                const statusSystem = document.getElementById('status-sistem');
+                if (data.flame || data.latest_suhu > 35 || data.latest_gas > 1000) {
+                    statusSystem.innerText = 'Bahaya';
+                    statusSystem.className = 'text-2xl font-bold mt-1 font-sans text-center text-red-600';
+                } else if (data.latest_suhu > 30 || data.latest_gas > 500) {
+                    statusSystem.innerText = '⚠️ Warning';
+                    statusSystem.className = 'text-2xl font-bold mt-1 font-sans text-center text-yellow-400';
+                } else {
+                    statusSystem.innerText = '✅ Stabil';
+                    statusSystem.className = 'text-2xl font-bold mt-1 font-sans text-center text-green-400';
+                }
+
+                    const sistemStatus = document.getElementById('sistem-status');
+                    const mqttStatus = document.getElementById('status-mqtt');
+
+                    if (data.status_koneksi) {
+                        sistemStatus.innerText = '🟢 Sistem Aktif';
+                        sistemStatus.className = 'bg-green-600 text-white font-medium px-3 py-1 rounded-full font-sans';
+
+                        mqttStatus.innerText = '📶 MQTT Connected';
+                        mqttStatus.className = 'bg-blue-500 text-white font-medium px-3 py-1 rounded-full font-sans';
+
+                        startTimerPersistent(); // aktifkan timer
+                    } else {
+                        sistemStatus.innerText = '🔴 Sistem Mati';
+                        sistemStatus.className = 'bg-red-600 text-white font-medium px-3 py-1 rounded-full font-sans';
+
+                        mqttStatus.innerText = '🔌 MQTT Disconnected';
+                        mqttStatus.className = 'bg-red-500 text-white font-medium px-3 py-1 rounded-full font-sans';
+
+                        resetTimerPersistent(); // matikan timer
+                    }
+
+
+                const notif = document.getElementById('notifikasi-log');
+                notif.innerHTML = '';
+                let adaNotif = false;
+                if (data.flame) {
+                    notif.innerHTML += '<li class="text-red-500 font-sans text-center">🔥 Api terdeteksi di ruangan!</li>';
+                    adaNotif = true;
+                }
+                if (data.latest_suhu > 32) {
+                    notif.innerHTML += '<li class="text-red-500 font-sans text-center">🌡️ Suhu melebihi batas normal!</li>';
+                    adaNotif = true;
+                }
+                if (data.latest_gas > 1000) {
+                    notif.innerHTML += '<li class="text-red-500 font-sans text-center">🧪 Konsentrasi gas tinggi!</li>';
+                    adaNotif = true;
+                }
+                if (!adaNotif) {
+                    notif.innerHTML = '<li class="font-sans text-center">✅ Tidak ada notifikasi saat ini.</li>';
+
+                }
+
+                const ringkasan = document.getElementById('ringkasan-sistem');
+                if (data.flame) {
+                    ringkasan.innerText = '🔥 Sistem mendeteksi adanya api! Lakukan tindakan segera.';
+                } else if (data.latest_gas > 1000 || data.latest_suhu > 35) {
+                    ringkasan.innerText = '⚠️ Kondisi lingkungan tidak stabil. Mohon perhatian.';
+                } else {
+                    ringkasan.innerText = '✅ Sistem dalam kondisi aman dan stabil.';
+                }
             });
     }
 
